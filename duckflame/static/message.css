@@ -1,0 +1,86 @@
+body {
+  background-image: url('newyork.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100% 100%;
+}
+
+#userBar {
+    height: 500px;
+    padding: 0px;
+}
+
+#messagebar {
+    height: 500px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-color: white;
+    border-color: black;
+    padding: 0px;
+}
+
+#channelBar {
+    height: 500px;
+    padding: 0px;
+}
+
+#channel {
+    margin-top: 2%;
+}
+
+#singmessage {
+    margin-top: 5%;
+    margin-bottom: 2%;
+}
+
+#allcolumn {
+    margin-top: 5%;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+    } to {
+        opacity: 1;
+    }
+}
+
+#singmessage {
+    animation-name: appear;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+}
+
+#looked {
+    margin-top: 10%;
+    margin-bottom: 5%;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px lightgrey;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: white;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: grey;
+}

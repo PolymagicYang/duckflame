@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename='index.js') }}"></script>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+        <title>duckflame</title>
+    </head>
+    <body style="background-color:lightgrey;">
+        <h5>duckflame@demo</h5>
+        <h1 class="headFirst">Talk with Everyone</h1>
+        <h1 class="headSecond">Everywhere</h1>
+        <h3 class="subhead">Are you with us?</h3>
+        <form action="duckflame" id="subname" method="POST">
+            <div class="input-group input-group-lg w25">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="info">Username</span>
+                </div>
+                <input name="name" type="text" placeholder="Enter your name to join us!" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                <button class="btn btn-primary" type="submit" name="button">Submit</button>
+            </div>
+        </form>
+    </body>
+</html>

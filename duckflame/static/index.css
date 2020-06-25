@@ -1,0 +1,44 @@
+@keyframes appear {
+    from {
+        opacity: 0;
+    } to {
+        opacity: 1;
+    }
+}
+
+.headFirst {
+    margin-top: 10%;
+    animation-name: appear;
+    animation-duration: 1.2s;
+    animation-fill-mode: forwards;
+}
+
+.headSecond {
+    animation-name: appear;
+    animation-duration: 1.1s;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+}
+
+.subhead {
+    text-align: center;
+    margin-top: 2%;
+    animation-name: appear;
+    animation-duration: 3s;
+    animation-fill-mode: forwards;
+    animation-play-state: paused;
+    font-size: 200%;
+}
+
+h1 {
+    text-align: center;
+    font-size: 400%;
+}
+
+div {
+    margin-left: 13%;
+}
+
+button {
+    margin-right: 38%;
+}
