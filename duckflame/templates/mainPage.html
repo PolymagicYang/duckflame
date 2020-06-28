@@ -56,6 +56,10 @@
             <button type="button" class="btn btn-primary" id="channel">{% raw -%}{{ ChannelName }}{%- endraw %}</button>
         </script>
 
+        <script id="createNewUser" type="text/x-handlebars-template">
+            <button type="button" class="btn btn-primary" id="userChoosen" color = "purple">{% raw -%}{{ userName }}{%- endraw %}</button>
+        </script>
+
         <title>duckflame</title>
 
     </head>
@@ -96,14 +100,15 @@
                 </div>
                 <div class="col-sm-2" id="allusers" style="background: white">
                     <div class="container" id="userBar">
-                        <p>onlineUsers:</p>
-                        {% for user in names if slf != user %}
-                            <p id="onlineUser">{{ user }}</p>
+                        <h3>onlineUsers:</h3>
+                        {% for name in onlineUsers %}
+                            <button type="button" class="btn btn-primary" id="userChoosen">{{ name }}</button>
                         {% endfor %}
                     </div>
                     <div class="input-group input-group-l", style="margin-bottom: 10px">
-                        <input type="text" id="checkUser" class="form-control" aria-label="content" aria-describedby="content">
-                        <button type="button" class="btn btn-primary" id="send">Serach</button>
+                        <button type="button" class="btn btn-primary" id="Notice">
+                            Notice
+                        </button>
                     </div>
                 </div>
             </div>

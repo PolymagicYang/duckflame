@@ -5,6 +5,7 @@ from flask import Flask, jsonify, render_template, request, session
 from flask_socketio import SocketIO, emit
 from flask_session import Session
 from datetime import datetime, date
+from flask_socketio import join_room, leave_room
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
@@ -39,9 +40,9 @@ def duckflame():
     name = request.form.get('name')
     if name in onlineUsers:
         render_template("error.html", userName=name)
-    Session["name"] = name
+    userTemp = onlineUsers[:]
     onlineUsers.append(name)
-    return render_template("mainPage.html", names=onlineUsers, name=name, slf=name)
+    return render_template("mainPage.html", onlineUsers=userTemp, name=name, slf=name)
 
 @app.route("/channelInfomation")
 def getChannel():
@@ -52,10 +53,24 @@ def changeChannel(ChannelName):
     name = ChannelName.split()
     return channel[name[0]]
 
+@socketio.on("privateMesSend")
+def sendPrivate(data):
+	username = data["username"]
+	room = data["room"]
+	content = data["content"]
+	emit("privateMesSend", {"content": content, "username": username}, room=room);
+
 @socketio.on("sub name")
 def enter(data):
     name = data["name"]
     emit("announce name", {"name": name}, broadcast=True)
+
+@socketio.on("connection request")
+def conRequest(data):
+	room = data["room"]
+	receiver = data["receiver"]
+	sender = data["sender"]
+	emit("connect Request", {"room": room, "receiver": receiver, "sender": sender}, broadcast=True)
 
 @socketio.on("message")
 def send(data):
@@ -79,6 +94,18 @@ def send(data):
 
     emit("announce message", {"name": name, "content": content, "ChannelName": ChannelName[0]}, broadcast=True)
 
+@socketio.on('join')
+def on_join(data):
+	username = data['username']
+	room = data['room']
+	join_room(room)
+	
+@socketio.on('leave')
+def on_leave(data):
+	username = data['username']
+	room = data['room']
+	leave_room(room)
+	
 @socketio.on("logout")
 def logout(data):
     onlineUsers.remove(date.name)
@@ -90,5 +117,8 @@ def createC(data):
     channelN = data["ChannelName"].replace(" ", "").split()
     channel[channelN[0]] = {}
     AllInfo[channelN[0]] = channelN
-    print(channelN)
     emit("announce new Channel", { "ChannelName": channelN }, broadcast=True)
+
+@socketio.on("newUserOnline")
+def newUserOnlineNotice(data):
+	emit("newUserOnlineNotice", { "name": data["name"] }, broadcast=True)

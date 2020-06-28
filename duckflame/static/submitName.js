@@ -5,8 +5,6 @@ function load_newChannel(ChannelName, action) {
         const response = JSON.parse(request.responseText);
         var parentBar = document.querySelector("#messagebar");
         document.querySelectorAll("#mess").forEach(function(mes) {
-            console.log(mes);
-            console.log(parentBar);
             parentBar.removeChild(mes);
         });
 
@@ -20,6 +18,13 @@ function load_newChannel(ChannelName, action) {
         };
     };
     request.send();
+};
+
+function noticeUser(sender, receiver) {
+    const noticeButt = document.querySelector("#Notice");
+    noticeButt.textContent = sender;
+    noticeButt.style = "background:red"
+    noticeButt.id = "needClick"
 };
 
 function gotoButtom(id, action) {
@@ -61,6 +66,13 @@ function createNewChannel(data) {
     const content = template({'ChannelName': ChannelName});
 
     document.querySelector('#channelBar').innerHTML += content;
+};
+
+function createNewUser(name) {
+    const template = Handlebars.compile(document.querySelector('#createNewUser').innerHTML);
+    const content = template({'userName': name});
+
+    document.querySelector('#userBar').innerHTML += content;
 };
 
 function initMes(name, content, action) {
@@ -119,6 +131,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let flag = 1;
     let channelNow = 'Public';
+    let userConnNow = 'no';
+    let isInRoom = false;
+    let roomNow = 'none';
+    
+    const name = document.querySelector("#name").textContent;
+    socket.emit("newUserOnline", {"name": name});
 
     socket.on('connect', () => {
         if (flag === 1) {
@@ -126,6 +144,10 @@ document.addEventListener("DOMContentLoaded", () => {
             socket.emit('sub name', {"name": name});
             flag = 0;
         }
+    });
+
+    socket.on("privateMesSend", data => {
+        createNewMess(data.username, data.content, "sendMes");
     });
 
     socket.on("announce name", data => {
@@ -147,24 +169,18 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     });
 
-    document.querySelector("#send").onclick = () => {
-        const content = document.querySelector("#content");
-        const result = content.value;
-        if (result.length == 0) {
-            alert("content can not be emprty!");
-        } else {
-            const ChannelName = channelNow;
-            const name = document.querySelector("#name").textContent;
-            const date = Date.now();
-
-            content.value = "";
-            socket.emit("message", {"message": result, "ChannelName": ChannelName, "name": name, "date": date});
-        }
-    };
+    socket.on("newUserOnlineNotice", data => {
+        createNewUser(data.name);
+    });
 
     socket.on("announce new Channel", data => {
-        console.log(data);
         createNewChannel(data);
+    });
+
+    socket.on("connect Request", data => {
+        if (name === data.receiver) {
+            noticeUser(data.sender, data.receiver); 
+        };
     });
 
     document.addEventListener('click', event => {
@@ -191,7 +207,83 @@ document.addEventListener("DOMContentLoaded", () => {
         if (Info.id === "channel") {
             const channel = Info.textContent;
             channelNow = channel;
+            const sendButt = document.querySelector("#privateMesSend");
+            if (sendButt != null) {
+                sendButt.id = "send";
+            };
+            
+            isInRoom = false;
+            userConnNow = "none";
+            
             load_newChannel(channel, "changeChannel");
+        };
+
+        if (Info.id === "userChoosen") {
+            const user = Info.textContent;
+            if (user != userConnNow) {
+                var parentBar = document.querySelector("#messagebar");
+                    document.querySelectorAll("#mess").forEach(function(mes) {
+                    parentBar.removeChild(mes);
+                });
+                userConnNow = user;
+                if (isInRoom) {
+                    socket.emit('leave', {"username": name, "room": roomNow});
+                };
+                roomNow = name;
+                socket.emit('join', {"username": name, "room": name});
+                socket.emit('connection request', {"room": roomNow, "receiver": userConnNow, "sender": name});
+                isInRoom = true;
+                const sendButt = document.querySelector("#send");
+                if (sendButt != null) {
+                    sendButt.id = "privateMesSend";
+                };
+            };
+        };
+
+        if (Info.id === "privateMesSend") {
+            const content = document.querySelector("#content");
+            const result = content.value;
+            if (result.length === 0) {
+                alert("content can not be empty!");
+            } else {
+                content.value = "";
+                socket.emit("privateMesSend", {"username": name, "room": roomNow, "content": result});
+            };
+        };
+
+        if (Info.id === "needClick") {
+            userConnNow = Info.textContent;
+            roomNow = userConnNow;
+            Info.id = "Notice";
+            Info.style = "";
+
+            var parentBar = document.querySelector("#messagebar");
+            document.querySelectorAll("#mess").forEach(function(mes) {
+                parentBar.removeChild(mes);
+            });
+            if (isInRoom) {
+                socket.emit('leave', {"username": name, "room": roomNow});
+            };
+            socket.emit('join', {"username": name, "room": roomNow});
+            const sendButt = document.querySelector("#send");
+                if (sendButt != null) {
+                    sendButt.id = "privateMesSend";
+                };
+            isInRoom = true;
+        };
+
+        if (Info.id === "send") {
+            const content = document.querySelector("#content");
+            const result = content.value;
+            if (result.length == 0) {
+                alert("content can not be empty!");
+            } else {
+                const ChannelName = channelNow;
+                const name = document.querySelector("#name").textContent;
+                const date = Date.now();
+                content.value = "";
+                socket.emit("message", {"message": result, "ChannelName": ChannelName, "name": name, "date": date});
+            };
         };
     });
 });
