@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="PYTHON_MODULE" version="4">
+<<<<<<< HEAD
+=======
+  <component name="Flask">
+    <option name="enabled" value="true" />
+  </component>
+>>>>>>> f0c2fdd6c633ed7f63a8a3ceb7b936111261f67b
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
@@ -13,7 +19,11 @@
     <option name="TEMPLATE_CONFIGURATION" value="Jinja2" />
     <option name="TEMPLATE_FOLDERS">
       <list>
+<<<<<<< HEAD
         <option value="$MODULE_DIR$/duckflame/templates" />
+=======
+        <option value="$MODULE_DIR$/templates" />
+>>>>>>> f0c2fdd6c633ed7f63a8a3ceb7b936111261f67b
       </list>
     </option>
   </component>
