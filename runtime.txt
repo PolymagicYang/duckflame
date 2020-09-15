@@ -1,4 +1,1 @@
-python-3.7.6
-set FLASK_APP=application.py
-set SECRET_KEY=SECRET_KEY
-set DATABASE_URL=postgres://kuugupaygslxqy:6ad0753164900a81e0ddc80a6492fa0524b6df60938365d1b7ed31c60d38903b@ec2-54-81-37-115.compute-1.amazonaws.com:5432/dei1vg4g3nnqq9
+python-3.7.3
