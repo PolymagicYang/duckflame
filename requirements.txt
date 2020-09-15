@@ -1,0 +1,6 @@
+Flask
+Flask-SocketIO
+Flask-Session
+psycopg2-binary
+SQLAlchemy
+Jinja2

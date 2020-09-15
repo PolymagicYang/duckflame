@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ url_for('static', filename='message.css') }}">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script>
+        <script src="https://d3js.org/d3.v5.min.js"></script>
+        <script id="usermesOfothers" type="text/x-handlebars-template">
+            <div class="row align-items-start", id="mess">
+                <div class="col-sm-6">
+                    <div class="media rounded" id="singmessage">
+                        <img class="ml-3" src="{{ url_for('static', filename='mark.png') }}" width="60" height="60" class="mr-3" alt="...">
+                        <div class="media-body rounded" style="background: lightgrey; margin-left: 4%;">
+                            <h5 class="mt-0" style="margin-left: 2%;">
+                                {% raw -%}
+                                    {{ NameOfUser }}
+                                {%- endraw %}
+                            </h5>
+                            <p class="d-flex align-items-stretch" style="margin-left: 5%; margin-right: 5%; font-size: 30px">
+                                {% raw -%}
+                                    {{ messageContent }}
+                                {%- endraw %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+        </script>
+
+        <script id="usermesOfself" type="text/x-handlebars-template">
+            <div class="row align-items-start", id="mess">
+                <div class="col-sm-6">
+                </div>
+                <div class="col-sm-6">
+                    <div class="media rounded" id="singmessage">
+                        <div class="media-body rounded" style="background: lightgrey;">
+                            <h5 class="mt-0 mb-1" style="text-align: right; margin-right: 2%;">
+                                {% raw -%}
+                                    {{ NameOfUser }}
+                                {%- endraw %}
+                            </h5>
+                            <p class="d-flex align-items-stretch" style="margin-left: 5%; margin-right: 5%; font-size: 30px">
+                                {% raw -%}
+                                    {{ messageContent }}
+                                {%- endraw %}
+                            </p>
+                        </div>
+                        <img class="ml-3" src="{{ url_for('static', filename='mark.png') }}" width="60" height="60" class="mr-3" alt="...">
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        <script id="CreateChannel" type="text/x-handlebars-template">
+            <button type="button" class="btn btn-primary" id="channel">{% raw -%}{{ ChannelName }}{%- endraw %}</button>
+        </script>
+
+        <script id="createNewUser" type="text/x-handlebars-template">
+            <button type="button" class="btn btn-primary" id="userChoosen" color = "purple">{% raw -%}{{ userName }}{%- endraw %}</button>
+        </script>
+
+        <title>duckflame</title>
+
+    </head>
+    <script type="text/javascript" src="{{ url_for('static', filename='submitName.js') }}"></script>
+    <body>
+        <nav class="navbar navbar-light bg-light">
+            <a class="navbar-brand" href="#">
+                <img src="/docs/4.5/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="" loading="lazy">
+                duckflame@ZhiYang
+            </a>
+        </nav>
+        <div class="container rounded" id="allcolumn" style="border: 1px solid black;">
+            <div class="row align-items-start">
+                <div id="theme" class="col-sm-2", style="background: #49204f">
+                    <div class="container", id="channelBar">
+                        <h4 style="color: white">duckflame</h4>
+                        <h6 style="color: lightgrey">Hello!</h6>
+                        <p id="name", style="color: lightgrey">{{ name }}</p>
+                        <button id = "color set" value = "#49204f" type="button" class="btn btn-light btn-sm"></button>
+                        <button id = "color set" value = "#0f1112" type="button" class="btn btn-dark btn-sm"></button>
+                        <button id = "color set" value = "#b38507" type="button" class="btn btn-warning btn-sm"></button>
+                        <button id = "color set" value = "#02a638" type="button" class="btn btn-success btn-sm"></button>
+                        <button id = "color set" value = "#038cfc" type="button" class="btn btn-primary btn-sm"></button>
+                        <button id = "color set" value = "#d42e00" type="button" class="btn btn-danger btn-sm"></button>
+                        <hr style="color: white"></hr>
+                        <h6 style="margin-top: 5%; color: lightgrey">channelS:</h6>
+                    </div>
+                    <div class="input-group input-group-l", style="margin-bottom: 10px">
+                        <input type="text" id="Channelname" class="form-control" name="" value="">
+                        <button type="button" class="btn btn-primary" id="newChannel">Create</button>
+                    </div>
+                </div>
+                <div class="col-sm-8" style="background: white">
+                    <div class="container" id="messagebar">
+                        <h1>Message</h1>
+                    </div>
+                    <div class="input-group input-group-l", style="margin-bottom: 10px">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-lg">Content</span>
+                        </div>
+                        <input type="text" id="content" class="form-control" aria-label="content" aria-describedby="content">
+                        <button type="button" class="btn btn-primary" id="send">send</button>
+                    </div>
+                </div>
+                <div class="col-sm-2" id="allusers" style="background: white">
+                    <div class="container" id="userBar">
+                        <h3>onlineUsers:</h3>
+                        {% for name in onlineUsers %}
+                            <button type="button" class="btn btn-primary" id="userChoosen">{{ name }}</button>
+                        {% endfor %}
+                    </div>
+                    <div class="input-group input-group-l", style="margin-bottom: 10px">
+                        <button type="button" class="btn btn-success" id="Notice">
+                            Notice
+                        </button>
+                        <button type="button" class="btn btn-success" id="startDraw">
+                            Draw
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <svg id="draw">
+        </svg>
+    </body>
+</html>
