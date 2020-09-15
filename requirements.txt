@@ -4,5 +4,6 @@ Flask-Session
 psycopg2-binary
 SQLAlchemy
 Jinja2
+gevent-websocket
 gunicorn
 requests
